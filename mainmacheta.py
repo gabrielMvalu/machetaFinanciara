@@ -11,6 +11,6 @@ excel_file = st.file_uploader("Încarcă Macheta Financiară (Excel)", type=["xl
 
 # Afișează mesaj de confirmare a încărcării fișierelor
 if pdf_file is not None:
-    st.tost("Bilanțul Contabil a fost încărcat cu succes.")
+    st.toast("Bilanțul Contabil a fost încărcat cu succes.")
 if excel_file is not None:
-    st.tost("Macheta Financiară a fost încărcată cu succes.")
+    st.toast("Macheta Financiară a fost încărcată cu succes.")
