@@ -1,4 +1,5 @@
 import streamlit as st
+from verificari import check_excel_template
 
 # Titlul aplicației
 st.title("Automatizare Machetă Financiară")
@@ -11,6 +12,10 @@ excel_file = st.file_uploader("Încarcă Macheta Financiară (Excel)", type=["xl
 
 # Afișează mesaj de confirmare a încărcării fișierelor
 if pdf_file is not None:
-    st.toast("Bilanțul Contabil a fost încărcat cu succes.")
+    st.success("Bilanțul Contabil a fost încărcat cu succes.")
+
 if excel_file is not None:
-    st.toast("Macheta Financiară a fost încărcată cu succes.")
+    if check_excel_template(excel_file):
+        st.success("Macheta Financiară a fost încărcată cu succes și conține foaia '1A-Bilant'.")
+    else:
+        st.error("Macheta Financiară nu conține foaia '1A-Bilant'. Vă rugăm să încărcați fișierul corect.")
