@@ -15,7 +15,9 @@ if pdf_file is not None:
     st.success("Bilanțul Contabil a fost încărcat cu succes.")
 
 if excel_file is not None:
+    st.write("Verificarea machetei financiare...")
     if check_excel_template(excel_file):
         st.success("Macheta Financiară a fost încărcată cu succes și conține foaia '1A-Bilant'.")
     else:
         st.error("Macheta Financiară nu conține foaia '1A-Bilant'. Vă rugăm să încărcați fișierul corect.")
+
