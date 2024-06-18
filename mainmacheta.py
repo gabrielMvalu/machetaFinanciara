@@ -16,8 +16,8 @@ if pdf_file is not None:
 
 if excel_file is not None:
     st.write("Verificarea machetei financiare...")
-    if check_excel_template(excel_file):
-        st.success("Macheta Financiară a fost încărcată cu succes și conține foaia '1A-Bilant'.")
+    is_valid, message = check_excel_template(excel_file)
+    if is_valid:
+        st.success(f"Macheta Financiară a fost încărcată cu succes și conține foaia '1A-Bilant'. {message}")
     else:
-        st.error("Macheta Financiară nu conține foaia '1A-Bilant'. Vă rugăm să încărcați fișierul corect.")
-
+        st.error(message)
