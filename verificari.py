@@ -10,19 +10,16 @@ def check_excel_template(excel_file):
     excel_file (UploadedFile): Fișierul Excel încărcat
     
     Returns:
-    bool: True dacă foaia '1A-Bilant' este prezentă, altfel False
+    tuple: (bool, str) True dacă foaia '1A-Bilant' este prezentă și un mesaj de succes, altfel False și un mesaj de eroare
     """
     start_time = time.time()
     try:
         workbook = load_workbook(excel_file, data_only=True)
         sheet_names = workbook.sheetnames
+        duration = time.time() - start_time
         if "1A-Bilant" in sheet_names:
-            st.write(f"Sheet check completed in {time.time() - start_time} seconds")
-            return True
+            return True, f"Sheet check completed in {duration} seconds"
         else:
-            st.write(f"Sheet check completed in {time.time() - start_time} seconds")
-            return False
+            return False, f"Sheet check completed in {duration} seconds, but '1A-Bilant' not found."
     except Exception as e:
-        st.error(f"Eroare la încărcarea fișierului Excel: {e}")
-        return False
-
+        return False, f"Eroare la încărcarea fișierului Excel: {e}"
