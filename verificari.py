@@ -32,43 +32,45 @@ def extract_data_from_pdf(pdf_file):
                 for i, line in enumerate(lines):
                     st.write(f"Linie {i + 1}: {line}")  # Log fiecare linie pentru verificare cu număr de linie
                     if "1.Cheltuieli de constituire" in line:
-                        data['Cheltuieli de constituire'] = extract_value_from_line(line, 'Cheltuieli de constituire')
+                        data['Cheltuieli de constituire'] = extract_value_from_lines(lines, i)
                     elif "2.Cheltuieli de dezvoltare" in line:
-                        data['Cheltuieli de dezvoltare'] = extract_value_from_line(line, 'Cheltuieli de dezvoltare')
+                        data['Cheltuieli de dezvoltare'] = extract_value_from_lines(lines, i)
                     elif "3.Concesiuni,brevete, licente" in line:
-                        data['Concesiuni, brevete, licențe'] = extract_value_from_line(line, 'Concesiuni, brevete, licențe')
+                        data['Concesiuni, brevete, licențe'] = extract_value_from_lines(lines, i)
                     elif "4.Fond comercial" in line:
-                        data['Fond comercial'] = extract_value_from_line(line, 'Fond comercial')
+                        data['Fond comercial'] = extract_value_from_lines(lines, i)
                     elif "5Active necorporale de explorare" in line:
-                        data['Active necorporale de explorare'] = extract_value_from_line(line, 'Active necorporale de explorare')
+                        data['Active necorporale de explorare'] = extract_value_from_lines(lines, i)
                     elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
-                        data['Avansuri'] = extract_value_from_line(line, 'Avansuri')
+                        data['Avansuri'] = extract_value_from_lines(lines, i)
     return data
 
-def extract_value_from_line(line, category):
+def extract_value_from_lines(lines, start_index):
     """
-    Extrage valoarea numerică dintr-o linie de text
+    Extrage valoarea numerică din liniile consecutive de text
     
     Args:
-    line (str): Linia de text
-    category (str): Categoria pentru log-uri
+    lines (list): Liniile de text
+    start_index (int): Indexul de început
     
     Returns:
     float: Valoarea numerică extrasă
     """
-    st.write(f"Extracting value for {category} from line: {line}")  # Log linia pentru verificare
-    # Adaptează această parte pentru a extrage corect valoarea
-    parts = line.split()
-    value = 0.0
-    for part in parts:
-        try:
-            if part.replace(',', '').replace('-', '').isdigit():
+    for i in range(start_index, len(lines)):
+        line = lines[i]
+        st.write(f"Extracting value from line {i + 1}: {line}")  # Log linia pentru verificare
+        # Adaptează această parte pentru a extrage corect valoarea
+        parts = line.split()
+        for part in parts:
+            try:
+                # Eliminăm virgulele și convertim în float
                 value = float(part.replace(',', '').replace('-', ''))
-                st.write(f"Extracted value for {category}: {value}")
-                break
-        except ValueError:
-            continue
-    return value
+                st.write(f"Extracted value: {value}")
+                return value
+            except ValueError:
+                continue
+    return 0.0
+
 
 
 
