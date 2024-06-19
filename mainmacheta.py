@@ -12,9 +12,10 @@ with col1:
     pdf_file = st.file_uploader("Încarcă Bilanțul Contabil (PDF)", type=["pdf"])
     # Afișează mesaj de confirmare a încărcării fișierului PDF
     if pdf_file is not None:
+        pdf_content = pdf_file.read()
         st.toast("Bilanțul Contabil a fost încărcat cu succes.", icon='🎉')
         # Extrage datele din PDF
-        data_from_pdf = extract_data_from_pdf(pdf_file)
+        data_from_pdf = extract_data_from_pdf(pdf_content)
         st.write("Date extrase din Bilanțul Contabil:")
         st.write(data_from_pdf)
 
@@ -32,9 +33,10 @@ with col2:
             st.write("Descărcați macheta financiară completată:")
             st.download_button(
                 label="Descărcați Macheta Financiară",
-                data=open("/mnt/data/Macheta_Actualizata.xlsx", "rb"),
+                data=open("/mnt/data/Macheta_Actualizata.xlsx", "rb").read(),
                 file_name="Macheta_Actualizata.xlsx"
             )
+
 
 
 
