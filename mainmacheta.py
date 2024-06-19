@@ -1,6 +1,5 @@
 import streamlit as st
 from verificari import extract_data_from_pdf, update_excel_with_data
-import openpyxl
 
 # Titlul aplicației
 st.title("Automatizare Machetă Financiară")
