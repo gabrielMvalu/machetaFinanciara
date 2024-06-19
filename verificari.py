@@ -1,4 +1,3 @@
-import openpyxl
 import fitz  # PyMuPDF
 
 def extract_data_from_pdf(pdf_file):
@@ -25,9 +24,11 @@ def extract_data_from_pdf(pdf_file):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
             if "SITUATIA ACTIVELOR IMOBILIZATE" in text:
+                print(f"Pagina {page_num}: {text}")  # Log textul paginii pentru verificare
                 # Parsează textul pentru a extrage datele necesare
                 lines = text.split('\n')
                 for line in lines:
+                    print(f"Linie: {line}")  # Log fiecare linie pentru verificare
                     if "1. Cheltuieli de constituire" in line:
                         data['Cheltuieli de constituire'] = extract_value_from_line(line)
                     elif "2. Cheltuieli de dezvoltare" in line:
@@ -52,6 +53,7 @@ def extract_value_from_line(line):
     Returns:
     float: Valoarea numerică extrasă
     """
+    print(f"Extracting value from line: {line}")  # Log linia pentru verificare
     # Exemplu simplificat pentru extragerea valorii
     parts = line.split()
     for part in parts:
@@ -60,27 +62,4 @@ def extract_value_from_line(line):
         except ValueError:
             continue
     return 0.0
-
-def update_excel_with_data(excel_file, data):
-    """
-    Actualizează fișierul Excel cu datele extrase
-    
-    Args:
-    excel_file (UploadedFile): Fișierul Excel încărcat
-    data (dict): Datele extrase din PDF
-    """
-    workbook = openpyxl.load_workbook(excel_file)
-    sheet = workbook["1A-Bilant"]
-    
-    # Adaugă datele extrase în celulele corespunzătoare
-    sheet["D8"] = data.get('Cheltuieli de constituire', 0.00)
-    sheet["D9"] = data.get('Cheltuieli de dezvoltare', 0.00)
-    sheet["D10"] = data.get('Concesiuni, brevete, licențe', 0.00)
-    sheet["D11"] = data.get('Fond comercial', 0.00)
-    sheet["D12"] = data.get('Active necorporale de explorare', 0.00)
-    sheet["D13"] = data.get('Avansuri', 0.00)
-    
-    # Salvează workbook-ul actualizat
-    workbook.save("/mnt/data/Macheta_Actualizata.xlsx")
-
 
