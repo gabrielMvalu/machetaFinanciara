@@ -1,5 +1,4 @@
 import fitz  # PyMuPDF
-import streamlit as st
 
 def find_page_with_phrase(pdf_file, phrase):
     """
@@ -19,31 +18,73 @@ def find_page_with_phrase(pdf_file, phrase):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
             if phrase in text:
-                found_pages.append(page_num)
+                found_pages.append(page_num + 1)  # Adding 1 to match human-readable page numbers
     
     return found_pages
 
-# Streamlit interface
-st.title("Find Phrase in PDF")
-
-# Upload PDF file
-pdf_file = st.file_uploader("Upload PDF file", type=["pdf"])
-
-# Define the phrase to search for
-phrase = "SITUATIA ACTIVELOR IMOBILIZATE"
-
-if pdf_file is not None:
-    # Find the pages containing the phrase
-    pages_with_phrase = find_page_with_phrase(pdf_file, phrase)
+def extract_data_from_pdf(pdf_file):
+    """
+    Extrage datele din PDF
     
-    # Show the result in Streamlit
-    if pages_with_phrase:
-        st.write(f"Phrase '{phrase}' found on pages: {pages_with_phrase}")
-    else:
-        st.write(f"Phrase '{phrase}' not found in the PDF.")
+    Args:
+    pdf_file (UploadedFile): Fișierul PDF încărcat
+    
+    Returns:
+    dict: Datele extrase organizate într-un dicționar
+    """
+    data = {
+        "Cheltuieli de constituire": 0.0,
+        "Cheltuieli de dezvoltare": 0.0,
+        "Concesiuni, brevete, licențe": 0.0,
+        "Fond comercial": 0.0,
+        "Active necorporale de explorare": 0.0,
+        "Avansuri": 0.0
+    }
+    
+    pages_with_phrase = find_page_with_phrase(pdf_file, "SITUATIA ACTIVELOR IMOBILIZATE")
+    
+    if not pages_with_phrase:
+        return data
+    
+    with fitz.open(stream=pdf_file.read(), filetype="pdf") as pdf:
+        for page_num in pages_with_phrase:
+            page = pdf.load_page(page_num - 1)  # Subtracting 1 to get the correct index
+            text = page.get_text("text")
+            lines = text.split('\n')
+            for line in lines:
+                if "1.Cheltuieli de constituire" in line:
+                    data['Cheltuieli de constituire'] = extract_value_from_line(line)
+                elif "2.Cheltuieli de dezvoltare" in line:
+                    data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
+                elif "3.Concesiuni,brevete, licente" in line:
+                    data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
+                elif "4.Fond comercial" in line:
+                    data['Fond comercial'] = extract_value_from_line(line)
+                elif "5Active necorporale de explorare" in line:
+                    data['Active necorporale de explorare'] = extract_value_from_line(line)
+                elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
+                    data['Avansuri'] = extract_value_from_line(line)
+    
+    return data
 
-
-
+def extract_value_from_line(line):
+    """
+    Extrage valoarea numerică dintr-o linie de text
+    
+    Args:
+    line (str): Linia de text
+    
+    Returns:
+    float: Valoarea numerică extrasă
+    """
+    parts = line.split()
+    for part in parts:
+        try:
+            value = float(part.replace(',', '').replace('-', ''))
+            return value
+        except ValueError:
+            continue
+    return 0.0
 
 
 
