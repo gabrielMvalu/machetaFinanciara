@@ -32,40 +32,44 @@ def extract_data_from_pdf(pdf_file):
                 for line in lines:
                     st.write(f"Linie: {line}")  # Log fiecare linie pentru verificare
                     if "1.Cheltuieli de constituire" in line:
-                        data['Cheltuieli de constituire'] = extract_value_from_line(line)
+                        data['Cheltuieli de constituire'] = extract_value_from_line(line, 'Cheltuieli de constituire')
                     elif "2.Cheltuieli de dezvoltare" in line:
-                        data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
+                        data['Cheltuieli de dezvoltare'] = extract_value_from_line(line, 'Cheltuieli de dezvoltare')
                     elif "3.Concesiuni,brevete, licente" in line:
-                        data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
+                        data['Concesiuni, brevete, licențe'] = extract_value_from_line(line, 'Concesiuni, brevete, licențe')
                     elif "4.Fond comercial" in line:
-                        data['Fond comercial'] = extract_value_from_line(line)
+                        data['Fond comercial'] = extract_value_from_line(line, 'Fond comercial')
                     elif "5Active necorporale de explorare" in line:
-                        data['Active necorporale de explorare'] = extract_value_from_line(line)
+                        data['Active necorporale de explorare'] = extract_value_from_line(line, 'Active necorporale de explorare')
                     elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
-                        data['Avansuri'] = extract_value_from_line(line)
+                        data['Avansuri'] = extract_value_from_line(line, 'Avansuri')
     return data
 
-def extract_value_from_line(line):
+def extract_value_from_line(line, category):
     """
     Extrage valoarea numerică dintr-o linie de text
     
     Args:
     line (str): Linia de text
+    category (str): Categoria pentru log-uri
     
     Returns:
     float: Valoarea numerică extrasă
     """
-    st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
+    st.write(f"Extracting value for {category} from line: {line}")  # Log linia pentru verificare
     # Adaptează această parte pentru a extrage corect valoarea
     parts = line.split()
+    value = 0.0
     for part in parts:
         try:
-            value = float(part.replace(',', '').replace('-', ''))
-            st.write(f"Extracted value: {value}")
-            return value
+            if part.replace(',', '').replace('-', '').isdigit():
+                value = float(part.replace(',', '').replace('-', ''))
+                st.write(f"Extracted value for {category}: {value}")
+                break
         except ValueError:
             continue
-    return 0.0
+    return value
+
 
 
 
