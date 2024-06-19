@@ -1,11 +1,11 @@
 import fitz  # PyMuPDF
 
-def find_page_with_phrase(pdf_file, phrase):
+def find_page_with_phrase(pdf_content, phrase):
     """
     Find the page number in the PDF that contains the specified phrase.
     
     Args:
-    pdf_file (UploadedFile): The uploaded PDF file
+    pdf_content (bytes): The content of the uploaded PDF file
     phrase (str): The phrase to search for
     
     Returns:
@@ -13,7 +13,7 @@ def find_page_with_phrase(pdf_file, phrase):
     """
     found_pages = []
     
-    with fitz.open(stream=pdf_file.read(), filetype="pdf") as pdf:
+    with fitz.open(stream=pdf_content, filetype="pdf") as pdf:
         for page_num in range(len(pdf)):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
@@ -22,12 +22,12 @@ def find_page_with_phrase(pdf_file, phrase):
     
     return found_pages
 
-def extract_data_from_pdf(pdf_file):
+def extract_data_from_pdf(pdf_content):
     """
     Extrage datele din PDF
     
     Args:
-    pdf_file (UploadedFile): Fișierul PDF încărcat
+    pdf_content (bytes): The content of the uploaded PDF file
     
     Returns:
     dict: Datele extrase organizate într-un dicționar
@@ -41,12 +41,12 @@ def extract_data_from_pdf(pdf_file):
         "Avansuri": 0.0
     }
     
-    pages_with_phrase = find_page_with_phrase(pdf_file, "SITUATIA ACTIVELOR IMOBILIZATE")
+    pages_with_phrase = find_page_with_phrase(pdf_content, "SITUATIA ACTIVELOR IMOBILIZATE")
     
     if not pages_with_phrase:
         return data
     
-    with fitz.open(stream=pdf_file.read(), filetype="pdf") as pdf:
+    with fitz.open(stream=pdf_content, filetype="pdf") as pdf:
         for page_num in pages_with_phrase:
             page = pdf.load_page(page_num - 1)  # Subtracting 1 to get the correct index
             text = page.get_text("text")
@@ -85,6 +85,7 @@ def extract_value_from_line(line):
         except ValueError:
             continue
     return 0.0
+
 
 
 
