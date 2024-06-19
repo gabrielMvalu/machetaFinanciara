@@ -73,13 +73,14 @@ def update_excel_with_data(excel_file, data):
     sheet = workbook["1A-Bilant"]
     
     # Adaugă datele extrase în celulele corespunzătoare
-    sheet["C8"] = data.get('Cheltuieli de constituire', 0.00)
-    sheet["C9"] = data.get('Cheltuieli de dezvoltare', 0.00)
-    sheet["C10"] = data.get('Concesiuni, brevete, licențe', 0.00)
-    sheet["C11"] = data.get('Fond comercial', 0.00)
-    sheet["C12"] = data.get('Active necorporale de explorare', 0.00)
-    sheet["C13"] = data.get('Avansuri', 0.00)
+    sheet["D8"] = data.get('Cheltuieli de constituire', 0.00)
+    sheet["D9"] = data.get('Cheltuieli de dezvoltare', 0.00)
+    sheet["D10"] = data.get('Concesiuni, brevete, licențe', 0.00)
+    sheet["D11"] = data.get('Fond comercial', 0.00)
+    sheet["D12"] = data.get('Active necorporale de explorare', 0.00)
+    sheet["D13"] = data.get('Avansuri', 0.00)
     
     # Salvează workbook-ul actualizat
     workbook.save("/mnt/data/Macheta_Actualizata.xlsx")
+
 
