@@ -15,6 +15,7 @@ with col1:
         pdf_content = pdf_file.read()
         st.toast("Bilanțul Contabil a fost încărcat cu succes.", icon='🎉')
         # Extrage datele din PDF
+        st.write("Căutare frază în PDF...")
         data_from_pdf = extract_data_from_pdf(pdf_content)
         st.write("Date extrase din Bilanțul Contabil:")
         st.write(data_from_pdf)
@@ -36,6 +37,7 @@ with col2:
                 data=open("/mnt/data/Macheta_Actualizata.xlsx", "rb").read(),
                 file_name="Macheta_Actualizata.xlsx"
             )
+
 
 
 
