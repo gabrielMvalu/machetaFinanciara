@@ -55,13 +55,16 @@ def extract_value_from_line(line):
     float: Valoarea numerică extrasă
     """
     st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
-    # Exemplu simplificat pentru extragerea valorii
     parts = line.split()
     for part in parts:
         try:
-            return float(part.replace(',', ''))
+            # Extrage prima valoare numerică întâlnită în linie
+            value = float(part.replace(',', '').replace('-', ''))
+            st.write(f"Extracted value: {value}")
+            return value
         except ValueError:
             continue
     return 0.0
+
 
 
