@@ -1,5 +1,5 @@
 import streamlit as st
-from verificari import extract_data_from_pdf
+from verificari import find_page_with_phrase
 
 # Titlul aplicației
 st.title("Automatizare Machetă Financiară")
