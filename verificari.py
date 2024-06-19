@@ -29,8 +29,8 @@ def extract_data_from_pdf(pdf_file):
                 st.write(f"Pagina {page_num}: {text}")  # Log textul paginii pentru verificare
                 # Parsează textul pentru a extrage datele necesare
                 lines = text.split('\n')
-                for line in lines:
-                    st.write(f"Linie: {line}")  # Log fiecare linie pentru verificare
+                for i, line in enumerate(lines):
+                    st.write(f"Linie {i + 1}: {line}")  # Log fiecare linie pentru verificare cu număr de linie
                     if "1.Cheltuieli de constituire" in line:
                         data['Cheltuieli de constituire'] = extract_value_from_line(line, 'Cheltuieli de constituire')
                     elif "2.Cheltuieli de dezvoltare" in line:
@@ -69,7 +69,6 @@ def extract_value_from_line(line, category):
         except ValueError:
             continue
     return value
-
 
 
 
