@@ -21,6 +21,7 @@ def extract_data_from_pdf(pdf_file):
     }
     
     with fitz.open(stream=pdf_file.read(), filetype="pdf") as pdf:
+        # Găsește pagina cu titlul "SITUATIA ACTIVELOR IMOBILIZATE"
         for page_num in range(len(pdf)):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
@@ -30,17 +31,17 @@ def extract_data_from_pdf(pdf_file):
                 lines = text.split('\n')
                 for line in lines:
                     st.write(f"Linie: {line}")  # Log fiecare linie pentru verificare
-                    if "1. Cheltuieli de constituire" in line:
+                    if "1.Cheltuieli de constituire" in line:
                         data['Cheltuieli de constituire'] = extract_value_from_line(line)
-                    elif "2. Cheltuieli de dezvoltare" in line:
+                    elif "2.Cheltuieli de dezvoltare" in line:
                         data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
-                    elif "3. Concesiuni, brevete, licențe" in line:
+                    elif "3.Concesiuni,brevete, licente" in line:
                         data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
-                    elif "4. Fond comercial" in line:
+                    elif "4.Fond comercial" in line:
                         data['Fond comercial'] = extract_value_from_line(line)
-                    elif "5. Active necorporale de explorare" in line:
+                    elif "5Active necorporale de explorare" in line:
                         data['Active necorporale de explorare'] = extract_value_from_line(line)
-                    elif "6. Avansuri" in line:
+                    elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
                         data['Avansuri'] = extract_value_from_line(line)
     return data
 
@@ -55,16 +56,17 @@ def extract_value_from_line(line):
     float: Valoarea numerică extrasă
     """
     st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
+    # Adaptează această parte pentru a extrage corect valoarea
     parts = line.split()
     for part in parts:
         try:
-            # Extrage prima valoare numerică întâlnită în linie
             value = float(part.replace(',', '').replace('-', ''))
             st.write(f"Extracted value: {value}")
             return value
         except ValueError:
             continue
     return 0.0
+
 
 
 
