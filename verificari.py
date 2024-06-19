@@ -1,25 +1,61 @@
-import openpyxl
-from openpyxl import load_workbook
-import time
+import fitz  # PyMuPDF
 
-def check_excel_template(excel_file):
+def extract_data_from_pdf(pdf_file):
     """
-    Verifică dacă fișierul Excel conține foaia '1A-Bilant'
+    Extrage datele din PDF
     
     Args:
-    excel_file (UploadedFile): Fișierul Excel încărcat
+    pdf_file (UploadedFile): Fișierul PDF încărcat
     
     Returns:
-    tuple: (bool, str) True dacă foaia '1A-Bilant' este prezentă și un mesaj de succes, altfel False și un mesaj de eroare
+    dict: Datele extrase organizate într-un dicționar
     """
-    start_time = time.time()
-    try:
-        workbook = load_workbook(excel_file, data_only=True)
-        sheet_names = workbook.sheetnames
-        duration = time.time() - start_time
-        if "1A-Bilant" in sheet_names:
-            return True, f"Sheet check completed in {duration} seconds"
-        else:
-            return False, f"Sheet check completed in {duration} seconds, but '1A-Bilant' not found."
-    except Exception as e:
-        return False, f"Eroare la încărcarea fișierului Excel: {e}"
+    data = {
+        "Cheltuieli de constituire": 0.0,
+        "Cheltuieli de dezvoltare": 0.0,
+        "Concesiuni, brevete, licențe": 0.0,
+        "Fond comercial": 0.0,
+        "Active necorporale de explorare": 0.0,
+        "Avansuri": 0.0
+    }
+    
+    with fitz.open(stream=pdf_file.read(), filetype="pdf") as pdf:
+        for page_num in range(len(pdf)):
+            page = pdf.load_page(page_num)
+            text = page.get_text("text")
+            if "SITUATIA ACTIVELOR IMOBILIZATE" in text:
+                # Parsează textul pentru a extrage datele necesare
+                lines = text.split('\n')
+                for line in lines:
+                    if "1. Cheltuieli de constituire" in line:
+                        data['Cheltuieli de constituire'] = extract_value_from_line(line)
+                    elif "2. Cheltuieli de dezvoltare" in line:
+                        data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
+                    elif "3. Concesiuni, brevete, licențe" in line:
+                        data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
+                    elif "4. Fond comercial" in line:
+                        data['Fond comercial'] = extract_value_from_line(line)
+                    elif "5. Active necorporale de explorare" in line:
+                        data['Active necorporale de explorare'] = extract_value_from_line(line)
+                    elif "6. Avansuri" in line:
+                        data['Avansuri'] = extract_value_from_line(line)
+    return data
+
+def extract_value_from_line(line):
+    """
+    Extrage valoarea numerică dintr-o linie de text
+    
+    Args:
+    line (str): Linia de text
+    
+    Returns:
+    float: Valoarea numerică extrasă
+    """
+    # Exemplu simplificat pentru extragerea valorii
+    parts = line.split()
+    for part in parts:
+        try:
+            return float(part.replace(',', ''))
+        except ValueError:
+            continue
+    return 0.0
