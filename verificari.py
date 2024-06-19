@@ -1,4 +1,5 @@
 import fitz  # PyMuPDF
+import streamlit as st
 
 def extract_data_from_pdf(pdf_file):
     """
@@ -24,11 +25,11 @@ def extract_data_from_pdf(pdf_file):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
             if "SITUATIA ACTIVELOR IMOBILIZATE" in text:
-                print(f"Pagina {page_num}: {text}")  # Log textul paginii pentru verificare
+                st.write(f"Pagina {page_num}: {text}")  # Log textul paginii pentru verificare
                 # Parsează textul pentru a extrage datele necesare
                 lines = text.split('\n')
                 for line in lines:
-                    print(f"Linie: {line}")  # Log fiecare linie pentru verificare
+                    st.write(f"Linie: {line}")  # Log fiecare linie pentru verificare
                     if "1. Cheltuieli de constituire" in line:
                         data['Cheltuieli de constituire'] = extract_value_from_line(line)
                     elif "2. Cheltuieli de dezvoltare" in line:
@@ -53,7 +54,7 @@ def extract_value_from_line(line):
     Returns:
     float: Valoarea numerică extrasă
     """
-    print(f"Extracting value from line: {line}")  # Log linia pentru verificare
+    st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
     # Exemplu simplificat pentru extragerea valorii
     parts = line.split()
     for part in parts:
@@ -62,4 +63,5 @@ def extract_value_from_line(line):
         except ValueError:
             continue
     return 0.0
+
 
