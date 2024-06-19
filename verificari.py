@@ -1,4 +1,5 @@
 import fitz  # PyMuPDF
+import streamlit as st
 
 def find_page_with_phrase(pdf_content, phrase):
     """
@@ -19,6 +20,7 @@ def find_page_with_phrase(pdf_content, phrase):
             text = page.get_text("text")
             if phrase in text:
                 found_pages.append(page_num + 1)  # Adding 1 to match human-readable page numbers
+                st.write(f"Found phrase on page {page_num + 1}")
     
     return found_pages
 
@@ -44,6 +46,7 @@ def extract_data_from_pdf(pdf_content):
     pages_with_phrase = find_page_with_phrase(pdf_content, "SITUATIA ACTIVELOR IMOBILIZATE")
     
     if not pages_with_phrase:
+        st.write("Phrase 'SITUATIA ACTIVELOR IMOBILIZATE' not found in any page.")
         return data
     
     with fitz.open(stream=pdf_content, filetype="pdf") as pdf:
@@ -52,6 +55,7 @@ def extract_data_from_pdf(pdf_content):
             text = page.get_text("text")
             lines = text.split('\n')
             for line in lines:
+                st.write(f"Line: {line}")  # Log fiecare linie pentru verificare
                 if "1.Cheltuieli de constituire" in line:
                     data['Cheltuieli de constituire'] = extract_value_from_line(line)
                 elif "2.Cheltuieli de dezvoltare" in line:
@@ -77,15 +81,17 @@ def extract_value_from_line(line):
     Returns:
     float: Valoarea numerică extrasă
     """
+    st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
+    # Adaptează această parte pentru a extrage corect valoarea
     parts = line.split()
     for part in parts:
         try:
             value = float(part.replace(',', '').replace('-', ''))
+            st.write(f"Extracted value: {value}")
             return value
         except ValueError:
             continue
     return 0.0
-
 
 
 
