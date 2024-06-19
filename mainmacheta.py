@@ -1,5 +1,5 @@
 import streamlit as st
-from verificari import find_page_with_phrase
+from verificari import extract_data_from_pdf, find_page_with_phrase
 
 # Titlul aplicației
 st.title("Automatizare Machetă Financiară")
@@ -35,5 +35,6 @@ with col2:
                 data=open("/mnt/data/Macheta_Actualizata.xlsx", "rb"),
                 file_name="Macheta_Actualizata.xlsx"
             )
+
 
 
