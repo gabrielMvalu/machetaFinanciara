@@ -10,29 +10,25 @@ def find_page_with_phrase(pdf_content, phrase):
     phrase (str): The phrase to search for
     
     Returns:
-    list: List of page numbers containing the phrase
+    int: The page number containing the phrase (1-based index), or -1 if not found
     """
-    found_pages = []
-    
     with fitz.open(stream=pdf_content, filetype="pdf") as pdf:
         for page_num in range(len(pdf)):
             page = pdf.load_page(page_num)
             text = page.get_text("text")
             if phrase in text:
-                found_pages.append(page_num + 1)  # Adding 1 to match human-readable page numbers
-                st.write(f"Found phrase on page {page_num + 1}")
-    
-    return found_pages
+                return page_num + 1  # Returning 1-based page number
+    return -1
 
 def extract_data_from_pdf(pdf_content):
     """
-    Extrage datele din PDF
+    Extract data from PDF
     
     Args:
     pdf_content (bytes): The content of the uploaded PDF file
     
     Returns:
-    dict: Datele extrase organizate într-un dicționar
+    dict: Extracted data organized in a dictionary
     """
     data = {
         "Cheltuieli de constituire": 0.0,
@@ -43,46 +39,46 @@ def extract_data_from_pdf(pdf_content):
         "Avansuri": 0.0
     }
     
-    pages_with_phrase = find_page_with_phrase(pdf_content, "SITUATIA ACTIVELOR IMOBILIZATE")
+    page_num = find_page_with_phrase(pdf_content, "SITUATIA ACTIVELOR IMOBILIZATE")
     
-    if not pages_with_phrase:
-        st.write("Phrase 'SITUATIA ACTIVELOR IMOBILIZATE' not found in any page.")
+    if page_num == -1:
+        st.write("Fraza 'SITUATIA ACTIVELOR IMOBILIZATE' nu a fost găsită în PDF.")
         return data
+    else:
+        st.write(f"Fraza 'SITUATIA ACTIVELOR IMOBILIZATE' a fost găsită la pagina {page_num}.")
     
     with fitz.open(stream=pdf_content, filetype="pdf") as pdf:
-        for page_num in pages_with_phrase:
-            page = pdf.load_page(page_num - 1)  # Subtracting 1 to get the correct index
-            text = page.get_text("text")
-            lines = text.split('\n')
-            for line in lines:
-                st.write(f"Line: {line}")  # Log fiecare linie pentru verificare
-                if "1.Cheltuieli de constituire" in line:
-                    data['Cheltuieli de constituire'] = extract_value_from_line(line)
-                elif "2.Cheltuieli de dezvoltare" in line:
-                    data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
-                elif "3.Concesiuni,brevete, licente" in line:
-                    data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
-                elif "4.Fond comercial" in line:
-                    data['Fond comercial'] = extract_value_from_line(line)
-                elif "5Active necorporale de explorare" in line:
-                    data['Active necorporale de explorare'] = extract_value_from_line(line)
-                elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
-                    data['Avansuri'] = extract_value_from_line(line)
+        page = pdf.load_page(page_num - 1)  # Subtracting 1 to get the correct index
+        text = page.get_text("text")
+        lines = text.split('\n')
+        for line in lines:
+            st.write(f"Linie: {line}")  # Log fiecare linie pentru verificare
+            if "1.Cheltuieli de constituire" in line:
+                data['Cheltuieli de constituire'] = extract_value_from_line(line)
+            elif "2.Cheltuieli de dezvoltare" in line:
+                data['Cheltuieli de dezvoltare'] = extract_value_from_line(line)
+            elif "3.Concesiuni,brevete, licente" in line:
+                data['Concesiuni, brevete, licențe'] = extract_value_from_line(line)
+            elif "4.Fond comercial" in line:
+                data['Fond comercial'] = extract_value_from_line(line)
+            elif "5Active necorporale de explorare" in line:
+                data['Active necorporale de explorare'] = extract_value_from_line(line)
+            elif "6.Avansuri acordate pentru imobilizari necorporale" in line:
+                data['Avansuri'] = extract_value_from_line(line)
     
     return data
 
 def extract_value_from_line(line):
     """
-    Extrage valoarea numerică dintr-o linie de text
+    Extract numeric value from a line of text
     
     Args:
-    line (str): Linia de text
+    line (str): The line of text
     
     Returns:
-    float: Valoarea numerică extrasă
+    float: Extracted numeric value
     """
-    st.write(f"Extracting value from line: {line}")  # Log linia pentru verificare
-    # Adaptează această parte pentru a extrage corect valoarea
+    st.write(f"Extracting value from line: {line}")  # Log the line for verification
     parts = line.split()
     for part in parts:
         try:
