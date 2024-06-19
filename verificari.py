@@ -1,3 +1,4 @@
+import openpyxl
 import fitz  # PyMuPDF
 
 def extract_data_from_pdf(pdf_file):
@@ -59,3 +60,26 @@ def extract_value_from_line(line):
         except ValueError:
             continue
     return 0.0
+
+def update_excel_with_data(excel_file, data):
+    """
+    Actualizează fișierul Excel cu datele extrase
+    
+    Args:
+    excel_file (UploadedFile): Fișierul Excel încărcat
+    data (dict): Datele extrase din PDF
+    """
+    workbook = openpyxl.load_workbook(excel_file)
+    sheet = workbook["1A-Bilant"]
+    
+    # Adaugă datele extrase în celulele corespunzătoare
+    sheet["C8"] = data.get('Cheltuieli de constituire', 0.00)
+    sheet["C9"] = data.get('Cheltuieli de dezvoltare', 0.00)
+    sheet["C10"] = data.get('Concesiuni, brevete, licențe', 0.00)
+    sheet["C11"] = data.get('Fond comercial', 0.00)
+    sheet["C12"] = data.get('Active necorporale de explorare', 0.00)
+    sheet["C13"] = data.get('Avansuri', 0.00)
+    
+    # Salvează workbook-ul actualizat
+    workbook.save("/mnt/data/Macheta_Actualizata.xlsx")
+
